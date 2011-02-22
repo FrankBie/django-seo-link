@@ -1,0 +1,18 @@
+SEO_Link app
+=============
+
+Installation
+-------------
+
+Add it to your installed apps:
+
+    INSTALLED_APPS += ['seo_link']
+
+Set the middleware as last in your middleware classes chain:
+
+    MIDDLEWARE_CLASSES = [
+        ...
+        'django.middleware.common.CommonMiddleware',
+        ...
+        'seo_link.middleware.LinkToPostMiddleware',
+    ]

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+  <object pk="1" model="seo_link.matchtype">
+    <field type="CharField" name="name">StartsWith</field>
+  </object>
+  <object pk="2" model="seo_link.matchtype">
+    <field type="CharField" name="name">Exact</field>
+  </object>
+  <object pk="3" model="seo_link.matchtype">
+    <field type="CharField" name="name">RegEx</field>
+  </object>
+  <object pk="1" model="seo_link.excludepath">
+    <field to="seo_link.matchtype" name="type" rel="ManyToOneRel">1</field>
+    <field type="CharField" name="name">Admin</field>
+    <field type="CharField" name="pattern">/admin/</field>
+    
+  </object>
+  <object pk="2" model="seo_link.excludepath">
+    <field to="lseo_link.matchtype" name="type" rel="ManyToOneRel">1</field>
+    <field type="CharField" name="name">debug-toolbar</field>
+    <field type="CharField" name="pattern">/__debug__</field>
+    
+  </object>
+  <object pk="3" model="seo_link.excludepath">
+    <field to="seo_link.matchtype" name="type" rel="ManyToOneRel">1</field>
+    <field type="CharField" name="name">sentry</field>
+    <field type="CharField" name="pattern">/sentry</field>
+    
+  </object>
+  <object pk="4" model="seo_link.excludepath">
+    <field to="seo_link.matchtype" name="type" rel="ManyToOneRel">1</field>
+    <field type="CharField" name="name">ROOT none global exclude</field>
+    <field type="CharField" name="pattern">/</field>
+    
+  </object>
+  <object pk="1" model="seo_link.replacementtemplate">
+    <field type="CharField" name="name">Link</field>
+    <field type="CharField" name="template_filename">link.html</field>
+  </object>
+  <object pk="2" model="seo_link.replacementtemplate">
+    <field type="CharField" name="name">Replace</field>
+    <field type="CharField" name="template_filename">replace.html</field>
+  </object>
+  <object pk="3" model="seo_link.replacementtemplate">
+    <field type="CharField" name="name">Test</field>
+    <field type="CharField" name="template_filename">test.html</field>
+  </object>
+  <object pk="1" model="seo_link.targetpath">
+    <field type="CharField" name="name">Start Page</field>
+    <field type="CharField" name="path">/</field>
+    <field type="BooleanField" name="is_external">False</field>
+  </object>
+  <object pk="2" model="seo_link.targetpath">
+    <field type="CharField" name="name">Feedback Page</field>
+    <field type="CharField" name="path">/feedback/</field>
+    <field type="BooleanField" name="is_external">False</field>
+  </object>
+  <object pk="1" model="seo_link.term">
+    <field type="CharField" name="words">###REPLACE ME###</field>
+    <field type="PositiveIntegerField" name="word_count">2</field>
+    <field to="seo_link.replacementtemplate" name="replacement_template" rel="ManyToOneRel">3</field>
+    <field to="seo_link.targetpath" name="target_path" rel="ManyToOneRel">1</field>
+    <field type="BooleanField" name="is_case_sensitive">False</field>
+    <field type="BooleanField" name="is_active">True</field>
+    <field to="seo_link.excludepath" name="ignore_pattern" rel="ManyToManyRel"></field>
+  </object>
+  <object pk="2" model="seo_link.term">
+    <field type="CharField" name="words">replace me</field>
+    <field type="PositiveIntegerField" name="word_count">2</field>
+    <field to="seo_link.replacementtemplate" name="replacement_template" rel="ManyToOneRel">3</field>
+    <field to="seo_link.targetpath" name="target_path" rel="ManyToOneRel">1</field>
+    <field type="BooleanField" name="is_case_sensitive">False</field>
+    <field type="BooleanField" name="is_active">True</field>
+    <field to="seo_link.excludepath" name="ignore_pattern" rel="ManyToManyRel"></field>
+  </object>
+  <object pk="3" model="seo_link.term">
+    <field type="CharField" name="words">test_me</field>
+    <field type="PositiveIntegerField" name="word_count">1</field>
+    <field to="seo_link.replacementtemplate" name="replacement_template" rel="ManyToOneRel">3</field>
+    <field to="seo_link.targetpath" name="target_path" rel="ManyToOneRel">1</field>
+    <field type="BooleanField" name="is_case_sensitive">False</field>
+    <field type="BooleanField" name="is_active">True</field>
+    <field to="seo_link.excludepath" name="ignore_pattern" rel="ManyToManyRel"></field>
+  </object>
+  <object pk="4" model="seo_link.term">
+    <field type="CharField" name="words">test me now</field>
+    <field type="PositiveIntegerField" name="word_count">3</field>
+    <field to="seo_link.replacementtemplate" name="replacement_template" rel="ManyToOneRel">3</field>
+    <field to="seo_link.targetpath" name="target_path" rel="ManyToOneRel">1</field>
+    <field type="BooleanField" name="is_case_sensitive">False</field>
+    <field type="BooleanField" name="is_active">True</field>
+    <field to="seo_link.excludepath" name="ignore_pattern" rel="ManyToManyRel"></field>
+  </object>
+  <object pk="5" model="seo_link.term">
+    <field type="CharField" name="words">test me</field>
+    <field type="PositiveIntegerField" name="word_count">2</field>
+    <field to="seo_link.replacementtemplate" name="replacement_template" rel="ManyToOneRel">3</field>
+    <field to="seo_link.targetpath" name="target_path" rel="ManyToOneRel">1</field>
+    <field type="BooleanField" name="is_case_sensitive">False</field>
+    <field type="BooleanField" name="is_active">True</field>
+    <field to="seo_link.excludepath" name="ignore_pattern" rel="ManyToManyRel"></field>
+  </object>
+  <object pk="6" model="seo_link.term">
+    <field type="CharField" name="words">test me now here</field>
+    <field type="PositiveIntegerField" name="word_count">4</field>
+    <field to="seo_link.replacementtemplate" name="replacement_template" rel="ManyToOneRel">3</field>
+    <field to="seo_link.targetpath" name="target_path" rel="ManyToOneRel">1</field>
+    <field type="BooleanField" name="is_case_sensitive">False</field>
+    <field type="BooleanField" name="is_active">True</field>
+    <field to="seo_link.excludepath" name="ignore_pattern" rel="ManyToManyRel"></field>
+  </object>
+  <object pk="7" model="seo_link.term">
+    <field type="CharField" name="words">test me now here fast</field>
+    <field type="PositiveIntegerField" name="word_count">5</field>
+    <field to="seo_link.replacementtemplate" name="replacement_template" rel="ManyToOneRel">3</field>
+    <field to="seo_link.targetpath" name="target_path" rel="ManyToOneRel">1</field>
+    <field type="BooleanField" name="is_case_sensitive">False</field>
+    <field type="BooleanField" name="is_active">True</field>
+    <field to="seo_link.excludepath" name="ignore_pattern" rel="ManyToManyRel"></field>
+  </object>
+  <object pk="8" model="seo_link.term">
+    <field type="CharField" name="words">###ALWAYS IGNORE PATH###</field>
+    <field type="PositiveIntegerField" name="word_count">3</field>
+    <field to="seo_link.replacementtemplate" name="replacement_template" rel="ManyToOneRel">3</field>
+    <field to="seo_link.targetpath" name="target_path" rel="ManyToOneRel">1</field>
+    <field type="BooleanField" name="is_case_sensitive">False</field>
+    <field type="BooleanField" name="is_active">True</field>
+    <field to="seo_link.excludepath" name="ignore_pattern" rel="ManyToManyRel"><object pk="4"></object></field>
+  </object>
+</django-objects>

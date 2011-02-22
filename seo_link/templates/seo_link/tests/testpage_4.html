@@ -1,0 +1,38 @@
+{% extends "seo_link/tests/test_base.html" %}
+
+{% block body %}
+<p> multi colum id nesting testpage </p>
+<p> contains ids (col1,col2,col3,col4) css classes (main,sidebar)</p>
+<div id="col1">
+<p> id=col1 is not restricted in any way,
+ main is operational css class
+ sidebar is ignore css class</p>
+	<div class="main">
+		<p>here it should be replaced ###REPLACE ME###</p>
+	</div>
+	<div class="sidebar">
+		<p>here it should not be replaced ###REPLACE ME###</p>
+	</div>
+</div>
+<div id="col2">
+	<div class="main">
+		<p> id=col2 is to ignore, but class main allows replacement</p>
+		<p> so this should not be replaced ###REPLACE ME###</p>
+	</div>
+</div>
+<div id="col3">
+	<p> id=col3 is operational, so this should be replaced ###REPLACE ME###</p>
+	<div class="sidebar">
+		<p> id=col3 is operational, but sidebar not</p>
+		<p> so this should not be replaced ###REPLACE ME###</p>
+	</div>
+</div>
+
+<div id="col4">
+	<p> id=col4 is operational, so this should be replaced ###REPLACE ME###</p>
+	<div class="sidebar main">
+		<p> id=col4 is operational, css class sidebar not and css class main is operational</p>
+		<p> so this should not be replaced ###REPLACE ME###</p>
+	</div>
+</div>
+{% endblock %}

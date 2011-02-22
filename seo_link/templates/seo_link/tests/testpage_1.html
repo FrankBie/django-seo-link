@@ -1,0 +1,82 @@
+{% extends "seo_link/tests/test_base.html" %}
+
+{% block body %}
+<p><b> settings:</b></br>
+	IGNORE_CSS_SELECTOR_CLASSES {{ seo_link_settings.IGNORE_CSS_SELECTOR_CLASSES }}<br/>
+	IGNORE_CSS_SELECTOR_IDS {{ seo_link_settings.IGNORE_CSS_SELECTOR_IDS }}<br/>
+	OPERATIONAL_CSS_SELECTOR_CLASSES {{ seo_link_settings.OPERATIONAL_CSS_SELECTOR_CLASSES }}<br/>
+	OPERATIONAL_CSS_SELECTOR_IDS {{ seo_link_settings.OPERATIONAL_CSS_SELECTOR_IDS }}<br/>
+</p>
+<p>
+	 1 here it should be replaced ###REPLACE ME###
+	<br>
+	here not <a href="http://www.bing.com"> bing ###REPLACE ME###</a>
+</p>
+<p>
+	inside plain p <br>
+	This should be replaced <br>
+	wordcount 1 test_me
+	wordcount 2 test me
+	wordcount 3 test me now
+	wordcount 4 test me now here
+	wordcount 5 test me now here fast
+</p>
+<div>
+inside plain div <br>
+This should be replaced<br>
+wordcount 1  test_me
+wordcount 2  test me
+wordcount 3  test me now
+wordcount 4  test me now here
+wordcount 5  test me now here fast
+</div>
+
+<div class="do not know">
+div nested p <br>
+This should be replaced 
+	<p>
+		wordcount 1 test_me
+		wordcount 2 test me
+		wordcount 3 test me now
+		wordcount 4 test me now here
+		wordcount 5 test me now here fast
+	</p>
+</div>
+
+<div class="nested">
+should be replaced
+wordcount 1 test_me
+nesting level 1 <br>
+wordcount 1 test_me
+	<div class="nested2">
+	should be replaced nested level 2<br/>
+	wordcount 1  test_me
+	wordcount 2  test me
+	wordcount 3  test me now
+	wordcount 4  test me now here
+	wordcount 5  test me now here fast
+	</div>
+</div>
+
+<div class="nested list test">
+	should be replaced
+	<p>
+	inside a p tag test_me
+	</p>
+	<p>
+	inside a p tag 
+	<ol>
+		<li>inside a list</li>
+		<li>replace should be here test_me</li>
+		<li><b>bold never replaced test_me</b></li>
+	</ol>
+</div>
+<div>
+	<h1>h1 never replaced test_me</h1>
+	<h2>h2 never replaced test_me</h2>
+	<b>bold 2 never replaced test_me</b>
+</div>
+
+
+
+{% endblock %}

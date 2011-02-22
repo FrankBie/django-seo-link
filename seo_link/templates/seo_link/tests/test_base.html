@@ -1,0 +1,71 @@
+<!DOCTYPE html><html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>TESTBASE</title>
+	<meta name="description" content="TEST CASE BASE">
+	<style type="text/css">
+	.red {color:red;}
+	#col1,#col2,#col3,#col4,#col5{width:20%,float:left;}
+	.page-row-line {margin-left: auto; margin-right: auto; position: relative; width: 1020px; }
+	</style>
+</head>
+<body>
+	<div class="header">
+		{% block header %}
+		<div class="page-row-line clearfix">
+			<a href="/">This is a dumb header link</a>
+			<div class="nav">
+				<ul>
+				<li><a href="/">1 a link in the nav1</a></li>
+				<li><a href="/">2 a link in the nav2</a></li>
+				<li><a href="/">3 a link in the nav3</a></li>
+				<li><a href="/">4  ###REPLACE ME### test link should never be replaced</a></li>
+				<li><p>and this text should never be replaced ###REPLACE ME###</p></li>
+				</ul>
+			</div>
+			<div class="user-nav">
+				</div>
+				<p class="user-expand-tab">
+					<span class="user-expand">+</span>
+						Hello USER
+				</p>
+				<p>and this text should never be replaced ###REPLACE ME###</p>
+			</div>
+		</div>
+		<div class="page-row-line clearfix">
+			<ul class="nav sub-nav">
+				<li><a href="/">a link in the sub nav</a></li>
+			</ul>
+		</div>
+		{% endblock %}
+	</div>
+	
+	<div class="teaser">
+		<div class="page-row-line clearfix">
+			<p>and this text should never be replaced ###REPLACE ME###</p>
+		</div>
+	</div>
+	<div class="main">
+		<div class="page-row-line clearfix">
+			{% block body %}{% endblock %}
+		</div>
+	</div>
+	<div class="footer">
+		<div class="page-row-line clearfix">
+			{% block footer %}{% endblock %}
+		</div>
+	</div>
+	<div class="footer footer_addon">
+		<div class="page-row-line clearfix">
+			<ul class="footer-list">
+				<li><span>&copy; DOMAINNAME 2010</span>&bull;</li>
+				<li><a href="/seo_link/test_all" target="_blank">A Footer Link</a>&bull;</li>
+				<li><a href="/seo_link/test_1" target="_blank">A Footer Link1</a>&bull;</li>
+				<li><a href="/seo_link/test_2">Terms &amp; Conditions</a>&bull;</li>
+			</ul>
+			<p> a never replaced ###REPLACE ME### LINK </p>
+		</div>
+	</div>
+	<a class="feedback-link" href="http://localhost:8000/seo_link/feedback">Feedback</a>
+</body>
+</html>

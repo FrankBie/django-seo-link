@@ -1,0 +1,27 @@
+{% extends "seo_link/tests/test_base.html" %}
+
+{% block body %}
+<p><b> settings:</b></br>
+	IGNORE_CSS_SELECTOR_CLASSES {{ seo_link_settings.IGNORE_CSS_SELECTOR_CLASSES }}<br/>
+	IGNORE_CSS_SELECTOR_IDS {{ seo_link_settings.IGNORE_CSS_SELECTOR_IDS }}<br/>
+	OPERATIONAL_CSS_SELECTOR_CLASSES {{ seo_link_settings.OPERATIONAL_CSS_SELECTOR_CLASSES }}<br/>
+	OPERATIONAL_CSS_SELECTOR_IDS {{ seo_link_settings.OPERATIONAL_CSS_SELECTOR_IDS }}<br/>
+</p>
+<div class="nav">
+	nestes div.nav in div.main with 
+	 1 here it should not be replaced ###REPLACE ME###
+	<br>
+	here not <a href="http://www.bing.com">###REPLACE ME###</a>
+</div>
+
+<div class="main">
+	nested div main
+	here it should be replaced
+	###REPLACE ME###
+</div>
+<div class="footer">
+	nested div.footer
+	nothing is replaced here test me
+</div>
+
+{% endblock %}
