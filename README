@@ -1,5 +1,8 @@
 SEO_Link app
 =============
+
+If you have a big site and want insert links into your content,
+but do not want to edit all the content, this is the app for you.
 It makes SEO link shaping a charm.
 
 
@@ -12,15 +15,15 @@ The injection of the terms and links can be configured.
 The injection is triggered based on OperationPath rules.
 e.g. path contains/startswith/regex/exact : /abc/
 
-The content area the injection should be done with,
-is configured through
-OPERATIONAL_CSS_SELECTOR_CLASSES
-OPERATIONAL_CSS_SELECTOR_IDS
-IGNORE_CSS_SELECTOR_CLASSES
-IGNORE_CSS_SELECTOR_IDS
+The content area the injection should be done with can be
+configured:
+
+- OPERATIONAL_CSS_SELECTOR_CLASSES
+- OPERATIONAL_CSS_SELECTOR_IDS
+- IGNORE_CSS_SELECTOR_CLASSES
+- IGNORE_CSS_SELECTOR_IDS
 
 This way you could mark content areas, where the operation should be performed.
-
 
 
 Installation
@@ -49,12 +52,11 @@ First steps:
     There is a basic configuration included in the test cases.
     python manage.py test seo_link --failfast
     
-    
-   
-    
 Dependencies:
 --------------
-    BeautifulSoup (ships with django)
+    BeautifulSoup 
+    South
+    Django
     - optional lxml
     
 Backends:
@@ -68,4 +70,6 @@ Backends:
     - seo_link.backends.advanced.LXMLCachedBackend
         Cached LXML version
       
-      
+Settings:
+----------
+        please check the seo_link/settings.py for all the possible configurations

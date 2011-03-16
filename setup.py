@@ -49,6 +49,7 @@ setup(
     install_requires=[
         'Django>=1.2',
         'south>=0.7.2',
+        'BeautifulSoup>=3.2.0',
     ],
     packages=find_packages(exclude=["example", "example.*","testdata","testdata.*"]),
     package_data={
