@@ -1,0 +1,82 @@
+{% extends "seo_link/tests/test_base.html" %}
+
+{% block body %}
+<p>
+	 1 here it should be replaced ###REPLACE ME###
+	<br>
+	here not <a href="http://www.bing.com"> bing ###REPLACE ME###</a>
+</p>
+<p>
+	inside plain p - incorrect br <br>
+	This should be replaced <br>
+	wordcount 1 test_me
+	wordcount 2 test me
+	wordcount 3 test me now
+	wordcount 4 test me now here
+	wordcount 5 test me now here fast
+</p>
+<p>
+	inside plain p  - correct br/  <br/>
+	This should be replaced <br/>
+	wordcount 1 test_me
+	wordcount 2 test me
+	wordcount 3 test me now
+	wordcount 4 test me now here
+	wordcount 5 test me now here fast
+</p>
+
+<p>
+	inside plain p  - correct br /  <br />
+	This should be replaced <br />
+	wordcount 1 test_me
+	wordcount 2 test me
+	wordcount 3 test me now
+	wordcount 4 test me now here
+	wordcount 5 test me now here fast
+</p>
+
+
+<div>
+no id no class
+inside plain div <br>
+This should be replaced<br>
+wordcount 1  test_me
+wordcount 2  test me
+wordcount 3  test me now
+wordcount 4  test me now here
+wordcount 5  test me now here fast
+</div>
+
+<div>
+wordcount 1  test_me
+wordcount 2  test me
+wordcount 3  test me now
+wordcount 4  test me now here
+wordcount 5  test me now here fast
+second one
+wordcount 1  test_me
+wordcount 2  test me
+wordcount 3  test me now
+wordcount 4  test me now here
+wordcount 5  test me now here fast
+</div>
+
+<div>
+	<p>
+		wordcount 1  test_me br incorrect <br>
+		wordcount 1  test_me br correct <br />
+		wordcount 2  test me br correct <br/>
+		wordcount 3  test me now
+		wordcount 4  test me now here
+		wordcount 5  test me now here fast
+	</p>
+second one
+wordcount 1  test_me
+wordcount 2  test me
+wordcount 3  test me now
+wordcount 4  test me now here
+wordcount 5  test me now here fast
+</div>
+
+
+{% endblock %}

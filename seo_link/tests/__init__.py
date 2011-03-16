@@ -3,22 +3,29 @@ import unittest
 import doctest
 
 from django.test.simple import run_tests as django_test_runner
-from seo_link.tests.backend import ReplacementTestCase,\
-    SimpleCachedBackendTestCase, ReplacementNestingTestCase
+from seo_link.tests.advanced import *
+from seo_link.tests.backend import *
+    
+
 
     
   
 #
 def suite():
     s = unittest.TestSuite()
+    #BACKEND = getattr(django_settings, 'SEO_LINK_BACKEND','seo_link.backends.simple.SimpleBackend')
     s.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ReplacementNestingTestCase))
     s.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ReplacementTestCase))
+    s.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(OperatingPathTestCase))
+    #lxml
+    #BACKEND = getattr(django_settings, 'SEO_LINK_BACKEND','seo_link.backends.advanced.LXMLBackend')
+    s.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(LxmlReplacementNestingTestCase))
+    s.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(LxmlReplacementTestCase))
+    s.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(LxmlOperatingPathTestCase))
+    #BACKEND = getattr(django_settings, 'SEO_LINK_BACKEND','seo_link.backends.simple.SimpleCachedBackend')
     s.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(SimpleCachedBackendTestCase))
-#    s.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(AbstractReputationBackendTestCase))
-#    s.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(QuestionViewsActionsTestCase))
-#    s.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ViewsTestCase))
-#    s.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(ViewsAnonymousReachablityTestCase))
-#    s.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(SimpleReputationBackendTestCase))
+    #BACKEND = getattr(django_settings, 'SEO_LINK_BACKEND','seo_link.backends.advanced.LXMLCachedBackend')
+    s.addTest(unittest.defaultTestLoader.loadTestsFromTestCase(LxmlCachedBackendTestCase))
     
     return s
  

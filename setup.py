@@ -1,38 +1,63 @@
 from setuptools import setup, find_packages
+import os, fnmatch
+import seo_link
 
-seo_link = __import__('seo_link')
+media_files = []
 
-readme_file = 'README'
-try:
-    long_description = open(readme_file).read()
-except IOError, err:
-    sys.stderr.write("[ERROR] Cannot find file specified as "
-        "``long_description`` (%s)\n" % readme_file)
-    sys.exit(1)
+for dirpath, dirnames, filenames in os.walk(os.path.join('seo_link', 'media')):
+    for filename in filenames:
+        filepath = os.path.join(dirpath, filename)
+        failed = False
+        for pattern in ('*.py', '*.pyc', '*~', '.*', '*.bak', '*.swp*'):
+            if fnmatch.fnmatchcase(filename, pattern):
+                failed = True
+        if failed:
+            continue
+        media_files.append(os.path.join(*filepath.split(os.sep)[1:]))
+        
+if seo_link.VERSION[-1] == 'final':
+    CLASSIFIERS = ['Development Status :: 5 - Production/Stable']
+elif 'beta' in seo_link.VERSION[-1]:
+    CLASSIFIERS = ['Development Status :: 4 - Beta']
+else:
+    CLASSIFIERS = ['Development Status :: 3 - Alpha']
 
-setup(name='django-seo-link',
-      version=seo_link.get_version(),
-      description='Internal Linking Silo Structure for massive sites',
-      long_description=long_description,
-      zip_safe=False,
-      author='Frank Bieniek',
-      author_email='frank.bieniek@produktlaunch.de',
-      url='http://github.com/FrankBie/django-seo-link',
-      download_url='http://github.com/FrankBie/django-seo-link/downloads',
-      packages = find_packages(exclude=['demo_project', 'demo_project.*']),
-      include_package_data=True,
-      install_requires = [
-        'Django>=1.2.4',
-        'BeautifulSoup',
-      ],
-      test_suite='tests.main',
-      classifiers = ['Development Status :: 1 - Alpha',
-                     'Environment :: Web Environment',
-                     'Framework :: Django',
-                     'Intended Audience :: Developers',
-                     'License :: OSI Approved :: MIT License',
-                     'Operating System :: OS Independent',
-                     'Programming Language :: Python',
-                     'Topic :: Utilities'],
-      )
+CLASSIFIERS += [
+    'Environment :: Web Environment',
+    'Framework :: Django',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
+    'Topic :: Software Development',
+    'Topic :: Software Development :: Libraries :: Application Frameworks',
+]
 
+setup(
+    author="Frank Bieniek",
+    author_email="seo_link@produktlaunch.de",
+    name='django-seo-link',
+    version=seo_link.__version__,
+    description='An Advanced SEO Link Middleware',
+    long_description=open(os.path.join(os.path.dirname(__file__), 'README')).read(),
+    url='http://github.com/FrankBie/django-seo-link/',
+    download_url='http://github.com/FrankBie/django-seo-link/downloads',
+    license='MIT License',
+    platforms=['OS Independent'],
+    classifiers=CLASSIFIERS,
+    install_requires=[
+        'Django>=1.2',
+        'south>=0.7.2',
+    ],
+    packages=find_packages(exclude=["example", "example.*","testdata","testdata.*"]),
+    package_data={
+        'seo_link': [
+            'templates/seo_link/*.html',
+            'templates/seo_link/*/*.html',
+            'fixtures/*.xml'
+        ]
+    },
+    test_suite = "seo_link.tests",
+    zip_safe = False
+)

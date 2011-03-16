@@ -1,0 +1,23 @@
+<html>
+<head>
+<title>Substitution view</title>
+</head>
+<body>
+<p>Viewing {{ test_url }} </p>
+<div class="line">
+	
+	<div style="float:left; width:50%;">
+		<p styl="text-align:center;">
+		Orginal Page
+		</p>
+		<iframe src="{{ test_url_no_processing }}" name="Orginal Page" width="98%" height="500"></iframe>
+	</div>
+	<div style="float:left; width:50%;">
+		<p styl="text-align:center;">
+		Processed Page
+		</p>
+		<iframe src="{{ test_url }}" name="Processed Page" width="98%" height="500"></iframe>
+	</div>
+</div>	
+</body>
+</html>

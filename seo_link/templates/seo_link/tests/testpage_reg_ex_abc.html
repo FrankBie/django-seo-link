@@ -1,0 +1,52 @@
+{% extends "seo_link/tests/test_base.html" %}
+
+{% block body %}
+<p>
+	abc reg ex test case pattern contains<b>abc</b> abc abcabcabc 
+</p>
+<p>
+	include startswith /link/testpage-reg in the path ###STARTS_WITH### 
+</p>
+<p>
+	include exact /link/testpage-reg-ex-abc in the path ###EXACT### 
+</p>
+<p>
+	include regular expression ex <b>###REG_EX###</b> ###REG_EX### 
+</p>
+
+<p>
+	include path contains abc <b>abc</b> ###CONTAINS_ABC### 
+</p>
+<p>
+	exclude path contains def <b>def</b> ###CONTAINS_DEF### 
+</p>
+<p>
+	inside plain p <br>
+	This should be replaced <br>
+	wordcount 1 test_me
+	wordcount 2 test me
+</p>
+
+<div class="main">
+	nested div main
+	here it should be replaced
+	###REPLACE ME###
+</div>
+<div class="footer">
+	nested div.footer
+	nothing is replaced here test me
+</div>
+<div>
+	wordcount 1  test_me
+	wordcount 2  test me
+	wordcount 3  test me now
+	wordcount 4  test me now here
+	wordcount 5  test me now here fast
+	second one
+	wordcount 1  test_me
+	wordcount 2  test me
+	wordcount 3  test me now
+	wordcount 4  test me now here
+	wordcount 5  test me now here fast
+</div>
+{% endblock %}

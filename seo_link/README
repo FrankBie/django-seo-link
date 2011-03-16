@@ -1,5 +1,27 @@
 SEO_Link app
 =============
+It makes SEO link shaping a charm.
+
+
+Description
+#############
+This reusable app is designed for injecting SEO Links to content areas
+of a website.
+It parses the html output and injects links based on a term dictionary.
+The injection of the terms and links can be configured.
+The injection is triggered based on OperationPath rules.
+e.g. path contains/startswith/regex/exact : /abc/
+
+The content area the injection should be done with,
+is configured through
+OPERATIONAL_CSS_SELECTOR_CLASSES
+OPERATIONAL_CSS_SELECTOR_IDS
+IGNORE_CSS_SELECTOR_CLASSES
+IGNORE_CSS_SELECTOR_IDS
+
+This way you could mark content areas, where the operation should be performed.
+
+
 
 Installation
 -------------
@@ -8,11 +30,42 @@ Add it to your installed apps:
 
     INSTALLED_APPS += ['seo_link']
 
-Set the middleware as last in your middleware classes chain:
+Set the middleware as last in your middleware classes chain,
+but before any csrf middleware if you want to use any form
+of caching
 
     MIDDLEWARE_CLASSES = [
         ...
         'django.middleware.common.CommonMiddleware',
         ...
-        'seo_link.middleware.LinkToPostMiddleware',
+        'seo_link.middleware.SeoLinkMiddleware',
     ]
+    
+To enable the admin preview functionality and the test cases
+add url(r"^link/", include("seo_link.tests.urls")),
+to your urls conf.
+
+First steps:
+    There is a basic configuration included in the test cases.
+    python manage.py test seo_link --failfast
+    
+    
+   
+    
+Dependencies:
+--------------
+    BeautifulSoup (ships with django)
+    - optional lxml
+    
+Backends:
+----------
+    - seo_link.backends.simple.SimpleBackend
+        It is Beautiful Soup Based
+    - seo_link.backends.simple.SimpleCachedBackend
+        Cached version of the Simple Backend
+    - seo_link.backends.advanced.LXMLBackend
+        LXML Based version
+    - seo_link.backends.advanced.LXMLCachedBackend
+        Cached LXML version
+      
+      

@@ -1,0 +1,31 @@
+{% extends "seo_link/tests/test_base.html" %}
+
+{% block body %}
+<p>
+	 1 here it should be replaced ###REPLACE ME###
+	<br>
+	here not <a href="http://www.bing.com"> bing ###REPLACE ME###</a>
+</p>
+<p>
+	inside plain p <br>
+	This should be replaced <br>
+	wordcount 1 test_me
+	wordcount 2 test me
+	wordcount 3 test me now
+	wordcount 4 test me now here
+	wordcount 5 test me now here fast
+</p>
+<div>
+no id no class
+inside plain div <br>
+This should be replaced<br>
+wordcount 1  test_me
+wordcount 2  test me
+wordcount 3  test me now
+wordcount 4  test me now here
+wordcount 5  test me now here fast
+</div>
+
+
+
+{% endblock %}

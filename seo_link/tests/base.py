@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
 import warnings
+import logging as log
+from copy import deepcopy
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -8,6 +10,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.handlers.wsgi import WSGIRequest
 from django.test.testcases import TestCase
 
+from seo_link import settings as seo_link_settings
+from seo_link.utils import dump_to_static_folderfile, get_seo_link_backend_class
+import seo_link.middleware
 
 class _Warning(object):
     def __init__(self, message, category, filename, lineno):
@@ -46,8 +51,45 @@ def _collectWarnings(observeWarning, f, *args, **kwargs):
         warnings.showwarning = origShow
     return result
 
-class SeoLinkTestCase(TestCase):
+class TestCaseAssertionDumps(TestCase):
+
+    def assertDumpContains(self,response,url,text, count=None, status_code=200, msg_prefix=''):
+        """
+        Dump the content in assertion error case
+        """
+        try:
+            self.assertContains(response, text, count, status_code, msg_prefix)
+        except AssertionError,e:
+            filename = url.replace("/","_").replace("&","-").replace("?","_").replace("%",'--').replace("#",'').replace("=",'--')
+            filename +="_test_error.html"
+            repl= "<!-- Backend: %s --!>\n</html>" % (seo_link_settings.BACKEND)
+            dump_to_static_folderfile(filename, response.content.replace("</html>",repl))
+            raise e
+
+
+
+class SeoLinkTestCase(TestCaseAssertionDumps):
     counter = 1
+    old_backend = None
+    
+    def setUp(self):
+        import seo_link.settings as seo_link_settings
+        
+        seo_link_settings.BACKEND = "seo_link.backends.simple.SimpleBackend"
+        seo_link.middleware.SEO_BACKEND = get_seo_link_backend_class(path=seo_link_settings.BACKEND)
+
+        seo_link_settings.MIN_TERM_WORD_COUNT = 0
+        seo_link_settings.MAX_DIFFERENT_TERM_REPLACMENT_PER_PAGE = None
+        seo_link_settings.IGNORE_EXCEPTIONS_ON = False
+        seo_link_settings.REPLACE_ONLY_ONE_TIME_PER_TERM = False
+        seo_link_settings.DEBUG = False
+        seo_link_settings.TIMER_ON = True
+
+    
+    def tearDown(self):
+        import seo_link.settings as seo_link_settings
+        seo_link_settings.BACKEND = self.old_backend
+        SEO_BACKEND = None
         
     def _pre_setup(self):
         """We are doing a lot of setting modifications in our tests, this 
@@ -55,11 +97,11 @@ class SeoLinkTestCase(TestCase):
         """
         super(SeoLinkTestCase, self)._pre_setup()
         # backup settings
-        #self._original_settings_wrapped = copy.deepcopy(settings._wrapped) 
+        self._original_settings_wrapped = deepcopy(settings._wrapped) 
         
     def _post_teardown(self):
         # restore original settings after each test
-        #settings._wrapped = self._original_settings_wrapped
+        settings._wrapped = self._original_settings_wrapped
         super(SeoLinkTestCase, self)._post_teardown()
     
     def login_user(self, user):
@@ -148,3 +190,5 @@ class SeoLinkTestCase(TestCase):
 
         return result
     assertWarns = failUnlessWarns
+
+

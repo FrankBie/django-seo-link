@@ -1,18 +1,23 @@
+# -*- coding: utf-8 -*-
 import re
 import logging as log
 
-from django.contrib.sites.models import get_current_site
-from django.core.cache import cache
-from django.utils.translation import get_language
-from seo_link import settings as seo_link_settings  
-from seo_link.backends import AbstractCachedMixin, AbstractUtilsMixin, AbstractSeoLinkBackend
-from seo_link.models import CacheKey
 from BeautifulSoup import BeautifulSoup, Tag, NavigableString
 
+from django.contrib.sites.models import get_current_site
+from django.utils.translation import get_language
+
+from seo_link import settings as seo_link_settings  
+from seo_link.backends import AbstractCachedMixin, OperationalCacheMixin
+from seo_link.backends import AbstractUtilsMixin, AbstractSeoLinkBackend
+from seo_link.models import CacheKey
+from seo_link.utils import smart_unicode_encode, dump_to_static_folderfile
 
 
 class NoCachedMixin(AbstractCachedMixin):
-
+    """
+    Mixin to Implement no caching functionality
+    """
     def _is_cached(self, request, response):
         return False
 
@@ -25,34 +30,42 @@ class NoCachedMixin(AbstractCachedMixin):
     def clear_cached(self, site_id=None, language=None, all=False):
         pass
 
-
-class SimpleBackend(AbstractUtilsMixin, AbstractSeoLinkBackend, NoCachedMixin):
+    
+class SimpleBackend(AbstractUtilsMixin, NoCachedMixin, AbstractSeoLinkBackend):
     """
-    Simple BeutifulSoup based Backend without caching
+    BeautifulSoup based backend without caching
     """
     soup = None
     iteration_count = 0
     
     def __init__(self, *args, **kwargs):
         super(SimpleBackend, self).__init__(*args, **kwargs)
+        
                 
     def replace_terms(self, request, response, terms):
         """
         Process the terms and put the templates in there
         """
-        html = response.content
-        pretty_html = BeautifulSoup(html).prettify()
-        soup = BeautifulSoup(pretty_html)
-        # sort the terms descending by wordcount manually
-        # @todo: ensure that we start with the longest term first
+        html_uni = None
+        if len(response._container) == 1:
+            # we want to take the unicode version of the content
+            html_uni = response._container[0] 
+        else:
+            html_uni = unicode(response.content)# 
+            
+        
+        soup = BeautifulSoup(html_uni)
+        
+        #sort the terms descending by wordcount manually
+        #ensure that we start with the longest term first
         terms = sorted(terms, key=lambda term_pack: term_pack[0].word_count * -1)
         
         if seo_link_settings.DEBUG:
             log.debug("to_process_terms %s" % terms)
+            log.debug("orginal encoding: %s" % soup.originalEncoding)
             
         for term_pack in terms:
             term, occourence = term_pack
-            #print "\nprocessing term %s wc %s, occourence %s" %(term.words,term.word_count,occourence)
             # check if the text is found
             reg_ex = self._compile_regex(term)
             matched_tags = soup.findAll(text=reg_ex)
@@ -68,35 +81,32 @@ class SimpleBackend(AbstractUtilsMixin, AbstractSeoLinkBackend, NoCachedMixin):
                 
                 for cur_tag in matched_tags:
                     new_html = self._replace_nodes_get_html(soup, cur_tag, term)
+                    
                 #@fixme: diry solution
                 # if there is a replacement done, the new html needs to be re read
                 if new_html is not None:
-                    #print "pattern2 %s" % pattern
                     reg_ex = self._compile_regex(term)
                     del soup
                     soup = BeautifulSoup(new_html)
                     
                     matched_tags2 = soup.findAll(text=reg_ex)
-                    #print "matched tags2 count %s" % (len(matched_tags2))
                     if len(matched_tags2) > 0:
                         new_html = None
                         for cur_tag in matched_tags2:
                             new_html = self._replace_nodes_get_html(soup, cur_tag, term)
                 # if there is a replacement done, the new html needs to be re read
                 if new_html is not None:
-                    #print "pattern2 %s" % pattern
                     reg_ex = self._compile_regex(term)
                     del soup
                     soup = BeautifulSoup(new_html)
                     
                     matched_tags2 = soup.findAll(text=reg_ex)
-                    #print "matched tags2 count %s" % (len(matched_tags2))
                     if matched_tags2:
                         new_html = None
                         for cur_tag in matched_tags2:
                             new_html = self._replace_nodes_get_html(soup, cur_tag, term)
 
-        response.content = soup.prettify()
+        response.content = unicode(soup)
         if seo_link_settings.DEBUG:
             log.debug("processed_terms_count %s" % len(self.processed_terms))
             log.debug("processed_terms %s" % self.processed_terms)
@@ -126,6 +136,7 @@ class SimpleBackend(AbstractUtilsMixin, AbstractSeoLinkBackend, NoCachedMixin):
                     break
         return found
     
+    #@fixme: use dry here?
     def _is_nodes_parent_tree_valid_for_replacement(self, soup2, cur_node, term):
         """
         Function to determine if the cur_node is encapsuled in any restriction
@@ -198,13 +209,12 @@ class SimpleBackend(AbstractUtilsMixin, AbstractSeoLinkBackend, NoCachedMixin):
     
     def _replace_nodes_get_html(self, soup2, cur_tag, term):
         self.iteration_count += 1 
+        soup_backup = soup2
         if self._is_nodes_parent_tree_valid_for_replacement(soup2, cur_tag, term) :
             #replace the node with the template
             #and reload the soup
             new_snippet = self._get_template_context_for_term(term)
-            #print "new snippet %s" % (new_snippet)
             new_html = u"" 
-            #print "type cur_tag %s" % cur_tag.__class__
             if isinstance(cur_tag, NavigableString):
                 if seo_link_settings.DEBUG:
                     log.debug("term %s replace: %s" % (term.words, cur_tag))
@@ -212,7 +222,6 @@ class SimpleBackend(AbstractUtilsMixin, AbstractSeoLinkBackend, NoCachedMixin):
                 replacement_count = self.get_replacement_count_for_term(term)
                 replacement_count += 1
                 self.update_replacement_count_for_term(term, replacement_count)
-                
                 if cur_tag.parent is not None:
                     """
                     replace the text with the new nodes structure
@@ -221,7 +230,7 @@ class SimpleBackend(AbstractUtilsMixin, AbstractSeoLinkBackend, NoCachedMixin):
                     parent_tag_contents = parent_tag.contents
                     cur_tag_index = parent_tag_contents.index(cur_tag)
                     new_txt = parent_tag_contents[cur_tag_index].replace(term.words, new_snippet['content'])
-                    new_node = BeautifulSoup(new_txt)
+                    new_node = BeautifulSoup(smart_unicode_encode(new_txt))
                     
                     if seo_link_settings.DEBUG:
                         log.debug("parent_tag_content %s" % parent_tag_contents)
@@ -240,7 +249,8 @@ class SimpleBackend(AbstractUtilsMixin, AbstractSeoLinkBackend, NoCachedMixin):
                     if do_replace:
                         if seo_link_settings.DEBUG:
                             log.debug("replacing node with %s" % new_node)
-
+                        soup_backup = soup2
+                        #replace it
                         cur_tag.extract()
                         parent_tag.insert(cur_tag_index, new_node)
                         cur_tag = parent_tag.contents[cur_tag_index]
@@ -251,60 +261,27 @@ class SimpleBackend(AbstractUtilsMixin, AbstractSeoLinkBackend, NoCachedMixin):
             else:
                 if seo_link_settings.DEBUG:
                     log.debug("matched tag class %s" % (cur_tag.__class__))
-
-        return u"".join(soup2.prettify()) # this is dirty but it is the only way to get the modified html as a new document
+        out = None
+        try:
+            out = u"".join(unicode(soup2)) # this is dirty but it is the only way to get the modified html as a new document 
+        except UnicodeDecodeError, e:
+            out = u"".join(unicode(soup_backup)) # get the none breaking version
+            log.error(e)
+            if seo_link_settings.DEBUG:
+                log.error("iteration:%s -tag:%s -term:%s "% (self.iteration_count,cur_tag,term.words))
+                log.error(cur_tag)
+                if seo_link_settings.DUMP_TEST_URLS_FAILURES_TO_STATIC:
+                    url = "parse_error_%s" %(term.words)
+                    filename = url.replace("/","_").replace("&","-").replace("?","_").replace("%",'--').replace("#",'').replace("=",'--').replace(" ",'-')
+                    filename +="_simple.html"
+                    dump_to_static_folderfile(filename,unicode(soup2))
+        return out
     
     
-class SimpleCachedBackend(SimpleBackend, AbstractCachedMixin):
-    
+class SimpleCachedBackend(OperationalCacheMixin, SimpleBackend):
+    """
+    Backend that caches the page, based on request.path
+    """
     def __init__(self, *args, **kwargs):
-        # load the stored keys.values_list('id', flat=True)
-        self.cached_content = set(CacheKey.objects.values_list('key', flat=True))
-        super(SimpleCachedBackend, self).__init__(*args, **kwargs) 
-    
-    def _is_cached(self, request, response):
-        return (self._get_lex_key(request) in self.cached_content)
-
-    def _get_cached(self, request, response):
-        key = self._get_lex_key(request)
-        cached_content = cache.get(key, None)
-        if cached_content:
-            return cached_content
-        return None
-
-    def _set_cached(self, request, response):
-        key = self._get_lex_key(request)
-        duration = seo_link_settings.CACHE_DURATION
-        lang = get_language()
-        site = get_current_site(request)
-        if (key in self.cached_content):
-            #remove if exists from cache
-            self.cached_content.remove(key)
-            #CacheKey.objects.delete(key=key, language=lang, site=site.id)
-        else:
-            #set cache
-            cache.set(key, response, duration)
-            if key not in self.cached_content:
-                self.cached_content.add(key)
-        # We need to have a list of the cache keys for languages and sites that
-        # span several processes - so we follow the Django way and share through 
-        # the database. It's still cheaper than recomputing every time!
-        # This way we can selectively invalidate per-site and per-language, 
-        # since the cache shared but the keys aren't 
-        CacheKey.objects.get_or_create(key=key, language=lang, site=site.id)
-    
-    def clear_cached(self, site_id=None, language=None, all=False):
-        '''
-        This invalidates the cache for a content (site_id and language)
-        '''
-        if all:
-            cache_keys = CacheKey.objects.get_keys()
-        else:
-            cache_keys = CacheKey.objects.get_keys(site_id, language)        
-        to_be_deleted = [obj.key for obj in cache_keys]
-        cache.delete_many(to_be_deleted)
-        cache_keys.delete()
-        # reload cached keys
-        self.cached_content = set(CacheKey.objects.values_list('key', flat=True))
-    
-
+        super(SimpleCachedBackend, self).__init__(*args, **kwargs)
+        #super classes have the cache 

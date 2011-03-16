@@ -1,0 +1,6 @@
+include AUTHORS
+include LICENSE
+include README
+include CHANGELOG.txt
+recursive-include seo_link *
+recursive-include docs *

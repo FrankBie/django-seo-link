@@ -4,9 +4,13 @@
 	<title>TESTBASE</title>
 	<meta name="description" content="TEST CASE BASE">
 	<style type="text/css">
-	.red {color:red;}
-	#col1,#col2,#col3,#col4,#col5{width:20%,float:left;}
-	.page-row-line {margin-left: auto; margin-right: auto; position: relative; width: 1020px; }
+		.red {color:red;}
+   		#col1,#col2,#col3,#col4{ width:20%; border:#ef0000 solid 1px;}
+   		.page-row-line {margin-left: auto; margin-right: auto; position: relative; width: 1020px; }
+   		.sidebar {background-color:#cdcdcd;}
+   		.lastunit {display: table-cell; float: none; width: auto;}
+   		.clearfix {display: block; float: none;}
+   		.unit { float: left; }
 	</style>
 </head>
 <body>
@@ -42,6 +46,15 @@
 	
 	<div class="teaser">
 		<div class="page-row-line clearfix">
+			<p>
+				<b> settings:</b></br>
+					BACKEND {{ seo_link_settings.BACKEND }}<br/>
+					active_backend {{ SEO_BACKEND }}
+					IGNORE_CSS_SELECTOR_CLASSES {{ seo_link_settings.IGNORE_CSS_SELECTOR_CLASSES }}<br/>
+					IGNORE_CSS_SELECTOR_IDS {{ seo_link_settings.IGNORE_CSS_SELECTOR_IDS }}<br/>
+					OPERATIONAL_CSS_SELECTOR_CLASSES {{ seo_link_settings.OPERATIONAL_CSS_SELECTOR_CLASSES }}<br/>
+					OPERATIONAL_CSS_SELECTOR_IDS {{ seo_link_settings.OPERATIONAL_CSS_SELECTOR_IDS }}<br/>
+			</p>
 			<p>and this text should never be replaced ###REPLACE ME###</p>
 		</div>
 	</div>
